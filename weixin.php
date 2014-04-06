@@ -1,5 +1,12 @@
 <?php
-
+/*
+Plugin Name: 微信
+Plugin URI: http://horizononline.cn/
+Description: 亲们不要随便乱动这个
+Version: @_@
+Author: ^_^
+Author URI: http://horizononline.cn/
+*/
 
 define("WEIXIN_TOKEN", "illumer");
 
@@ -48,10 +55,10 @@ class wechatCallback
 
     public function responseMsg()
     {
-        //get post data, May be due to the different environments
+      
         $postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
 
-        //extract post data
+      
         if (isset($_GET['debug']) || !empty($postStr))
 		{    
             if(!isset($_GET['debug']))
@@ -98,13 +105,13 @@ class wechatCallback
 			{
                 do_action('weixin_robot',$this->keyword,$textTpl, $picTpl);
             }
-			elseif($this->keyword == 'hi' || $this->keyword == '鎮ㄥソ'  || $this->keyword == '浣犲ソ' || $this->keyword == 'subscribe' )
+			elseif($this->keyword == 'hi' || $this->keyword == '您好'  || $this->keyword == '你好' || $this->keyword == 'subscribe' )
 			{
-                $weixin_welcome = "娆㈣繋鏉ュ埌illumer! 杈撳叆鍏抽敭璇嶅紑濮嬫绱€?;
+                $weixin_welcome = "欢迎来到illumer! 输入关键词开始检索。";
                 $weixin_welcome = apply_filters('weixin_welcome',$weixin_welcome);
                 echo sprintf($textTpl, $weixin_welcome);
             }
-	elseif(strstr($this->keyword ,'澶╂皵') == true )
+	elseif(strstr($this->keyword ,'天气') == true )
 	{
                  $html= file_get_html('http://www.weather.com.cn/html/weather/101010100.shtml');
                     $content = " ";
@@ -115,11 +122,11 @@ class wechatCallback
                     }
                 echo sprintf($textTpl, $content);
             }
-			elseif(strstr($this->keyword ,'绌烘皵') == true )
+			elseif(strstr($this->keyword ,'空气') == true )
 			{
 				header("Content-Type: text/html; charset=utf-8");  
 				$html= file_get_html('http://www.baidu.com/s?wd=%E5%8C%97%E4%BA%AC%E5%B8%82%E7%A9%BA%E6%B0%94%E6%B1%A1%E6%9F%93%E6%8C%87%E6%95%B0');
-                $content = "鎮ㄥソ锛?;
+                $content = "您好，";
 				    foreach( $html ->find("div[class=op_pm25_container1]") as  $e)
 					{
   						$e=strip_tags($e);
@@ -165,7 +172,7 @@ class wechatCallback
         
                 if($keyword_length > $weixin_keyword_allow_length)
 				{
-                    $weixin_keyword_too_long = "鏈夌偣闀?=";
+                    $weixin_keyword_too_long = "有点长==";
                     $weixin_keyword_too_long = apply_filters('weixin_keywords_too_long',$weixin_keyword_too_long);
                     echo sprintf($textTpl, $weixin_keyword_too_long);
                 }
@@ -174,7 +181,7 @@ class wechatCallback
                     $this->query();
                     if($this->articleCount == 0)
 					{
-                        $weixin_not_found = "鎶辨瓑锛屾病鏈夋壘鍒颁笌銆恵$this->keyword}銆戠浉鍏崇殑鏂囩珷銆傘€傘€?";
+                        $weixin_not_found = "抱歉，没有找到与【{$this->keyword}】相关的文章。。。 ";
                         $weixin_not_found = apply_filters('weixin_not_found', $weixin_not_found, $this->keyword);
                         echo sprintf($textTpl, $weixin_not_found);
                     }
@@ -268,7 +275,7 @@ class wechatCallback
         $weixin_token = apply_filters('weixin_token',WEIXIN_TOKEN);
         if(isset($_GET['debug']))
 		{
-            echo "\n".'WEIXIN_TOKEN锛?.$weixin_token;
+            echo "\n".'WEIXIN_TOKEN：'.$weixin_token;
         }
         $tmpArr = array($weixin_token, $timestamp, $nonce);
         sort($tmpArr);
